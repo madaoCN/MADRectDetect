@@ -29,6 +29,9 @@
 		511A00201FA4CA9C00C95093 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 511A001F1FA4CA9C00C95093 /* main.m */; };
 		511A002A1FA4CA9C00C95093 /* MADDocScanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 511A00291FA4CA9C00C95093 /* MADDocScanTests.m */; };
 		511A00351FA4CA9C00C95093 /* MADDocScanUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 511A00341FA4CA9C00C95093 /* MADDocScanUITests.m */; };
+		51710FB31FAB795D002CDCD7 /* MADCGTransfromHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 51710FB21FAB795D002CDCD7 /* MADCGTransfromHelper.m */; };
+		51710FB61FAB7A0A002CDCD7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51710FB51FAB7A02002CDCD7 /* CoreGraphics.framework */; };
+		51710FB81FAB7A77002CDCD7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51710FB71FAB7A6E002CDCD7 /* UIKit.framework */; };
 		5175D6931FA4D6DF003923CA /* MADSnapshotButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5175D6921FA4D6DF003923CA /* MADSnapshotButton.m */; };
 		5175D6961FA4D99A003923CA /* MADCameraCaptureController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5175D6951FA4D99A003923CA /* MADCameraCaptureController.m */; };
 /* End PBXBuildFile section */
@@ -98,6 +101,10 @@
 		511A00301FA4CA9C00C95093 /* MADDocScanUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MADDocScanUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		511A00341FA4CA9C00C95093 /* MADDocScanUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADDocScanUITests.m; sourceTree = "<group>"; };
 		511A00361FA4CA9C00C95093 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		51710FB11FAB795D002CDCD7 /* MADCGTransfromHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADCGTransfromHelper.h; sourceTree = "<group>"; };
+		51710FB21FAB795D002CDCD7 /* MADCGTransfromHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADCGTransfromHelper.m; sourceTree = "<group>"; };
+		51710FB51FAB7A02002CDCD7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		51710FB71FAB7A6E002CDCD7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5175D6911FA4D6DF003923CA /* MADSnapshotButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADSnapshotButton.h; sourceTree = "<group>"; };
 		5175D6921FA4D6DF003923CA /* MADSnapshotButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADSnapshotButton.m; sourceTree = "<group>"; };
 		5175D6941FA4D99A003923CA /* MADCameraCaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADCameraCaptureController.h; sourceTree = "<group>"; };
@@ -109,6 +116,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51710FB81FAB7A77002CDCD7 /* UIKit.framework in Frameworks */,
+				51710FB61FAB7A0A002CDCD7 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +207,7 @@
 				511A00281FA4CA9C00C95093 /* MADDocScanTests */,
 				511A00331FA4CA9C00C95093 /* MADDocScanUITests */,
 				511A000E1FA4CA9C00C95093 /* Products */,
+				51710FB41FAB7A01002CDCD7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -250,12 +260,31 @@
 		511A00421FA4CB6A00C95093 /* Capture */ = {
 			isa = PBXGroup;
 			children = (
+				51710FB01FAB77FB002CDCD7 /* utils */,
 				510D25351FAA12D100C0D483 /* category */,
 				510D25341FAA12C300C0D483 /* view */,
 				5175D6941FA4D99A003923CA /* MADCameraCaptureController.h */,
 				5175D6951FA4D99A003923CA /* MADCameraCaptureController.m */,
 			);
 			path = Capture;
+			sourceTree = "<group>";
+		};
+		51710FB01FAB77FB002CDCD7 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				51710FB11FAB795D002CDCD7 /* MADCGTransfromHelper.h */,
+				51710FB21FAB795D002CDCD7 /* MADCGTransfromHelper.m */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		51710FB41FAB7A01002CDCD7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				51710FB71FAB7A6E002CDCD7 /* UIKit.framework */,
+				51710FB51FAB7A02002CDCD7 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -398,6 +427,7 @@
 				510D25291FAA099C00C0D483 /* MASConstraintMaker.m in Sources */,
 				5175D6931FA4D6DF003923CA /* MADSnapshotButton.m in Sources */,
 				510D25271FAA099C00C0D483 /* ViewController+MASAdditions.m in Sources */,
+				51710FB31FAB795D002CDCD7 /* MADCGTransfromHelper.m in Sources */,
 				510D25261FAA099B00C0D483 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				510D25281FAA099C00C0D483 /* MASCompositeConstraint.m in Sources */,
 				511A00151FA4CA9C00C95093 /* ViewController.m in Sources */,
