@@ -25,9 +25,7 @@
     NSTimer *_borderDetectTimeKeeper;
     BOOL _borderDetectFrame;
     CIRectangleFeature *_borderDetectLastRectangleFeature;
-    CGRect _borderDetectLastImageRectangle;
     __block BOOL _isCapturing;
-    __block BOOL _shouldRemoveBorderLayer;
     
     CAShapeLayer *_rectOverlay;//边缘识别遮盖
 }
@@ -104,7 +102,8 @@
     if (_borderDetectTimeKeeper) {
         [_borderDetectTimeKeeper invalidate];
     }
-    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
+    // 每隔0.85监测
+    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:0.65f target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
     
     [self hideGLKView:NO completion:nil];
 }
@@ -328,6 +327,17 @@
     return [CIFilter filterWithName:@"CIColorControls" withInputParameters:@{@"inputContrast":@(1.1),kCIInputImageKey:image}].outputImage;
 }
 
+/// 将任意四边形转换成长方形
+- (CIImage *)correctPerspectiveForImage:(CIImage *)image withFeatures:(CIRectangleFeature *)rectangleFeature
+{
+    NSMutableDictionary *rectangleCoordinates = [NSMutableDictionary new];
+    rectangleCoordinates[@"inputTopLeft"] = [CIVector vectorWithCGPoint:rectangleFeature.topLeft];
+    rectangleCoordinates[@"inputTopRight"] = [CIVector vectorWithCGPoint:rectangleFeature.topRight];
+    rectangleCoordinates[@"inputBottomLeft"] = [CIVector vectorWithCGPoint:rectangleFeature.bottomLeft];
+    rectangleCoordinates[@"inputBottomRight"] = [CIVector vectorWithCGPoint:rectangleFeature.bottomRight];
+    return [image imageByApplyingFilter:@"CIPerspectiveCorrection" withInputParameters:rectangleCoordinates];
+}
+
 #pragma mark - AVCaptureVideoDataOutputSampleBufferDelegate
 -(void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
@@ -342,7 +352,7 @@
     
     if (self.isBorderDetectionEnabled)//开启了边缘检测
     {
-        if (_borderDetectFrame)
+        if (_borderDetectFrame)//开启了边缘识别
         {
             // 用高精度边缘识别器 识别特征
             NSArray <CIFeature *>*features = [[self highAccuracyRectangleDetector] featuresInImage:image];
@@ -358,7 +368,11 @@
 //            image = [self drawHighlightOverlayForPoints:image topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
             
             // draw border layer
-            [self drawBorderDetectRectWithImageRect:image.extent topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
+            if (rectangleDetectionConfidenceHighEnough(_imageDedectionConfidence))
+            {
+                [self drawBorderDetectRectWithImageRect:image.extent topLeft:_borderDetectLastRectangleFeature.topLeft topRight:_borderDetectLastRectangleFeature.topRight bottomLeft:_borderDetectLastRectangleFeature.bottomLeft bottomRight:_borderDetectLastRectangleFeature.bottomRight];
+            }
+            
         }
         else
         {
@@ -395,15 +409,15 @@
         [self.layer addSublayer:_rectOverlay];
     }
 
-    NSArray *arr = [self transfromRealRectWithImageRect:imageRect topLeft:topLeft topRight:topRight bottomLeft:bottomLeft bottomRight:bottomRight];
+    // 将图像空间的坐标系转换成uikit坐标系
+    TransformCIFeatureRect featureRect = [self transfromRealRectWithImageRect:imageRect topLeft:topLeft topRight:topRight bottomLeft:bottomLeft bottomRight:bottomRight];
     
-    // 边缘路径
+    // 边缘识别路径
     UIBezierPath *path = [UIBezierPath new];
-    [path moveToPoint:[arr[0] CGPointValue]];
-    [path addLineToPoint:[arr[1] CGPointValue]];
-    [path addLineToPoint:[arr[2] CGPointValue]];
-    [path addLineToPoint:[arr[3] CGPointValue]];
-    [path addLineToPoint:[arr[0] CGPointValue]];
+    [path moveToPoint:featureRect.topLeft];
+    [path addLineToPoint:featureRect.topRight];
+    [path addLineToPoint:featureRect.bottomRight];
+    [path addLineToPoint:featureRect.bottomLeft];
     [path closePath];
     // 背景遮罩路径
     UIBezierPath *rectPath  = [UIBezierPath bezierPathWithRect:CGRectMake(-5,
@@ -413,8 +427,87 @@
     [rectPath setUsesEvenOddFillRule:YES];
     [rectPath appendPath:path];
     _rectOverlay.path = rectPath.CGPath;
-
 }
+
+/// 拍照动作
+- (void)captureImageWithCompletionHandler:(CompletionHandler)completionHandler
+{
+    if (_isCapturing) return;
+    
+    __weak typeof(self) weakSelf = self;
+    
+    _isCapturing = YES;
+    //关闭闪光灯
+    [self setEnableFlash:NO];
+    
+    AVCaptureConnection *videoConnection = nil;
+    for (AVCaptureConnection *connection in self.stillImageOutput.connections)
+    {
+        for (AVCaptureInputPort *port in [connection inputPorts])
+        {
+            if ([[port mediaType] isEqual:AVMediaTypeVideo] )
+            {
+                videoConnection = connection;
+                break;
+            }
+        }
+        if (videoConnection) break;
+    }
+    
+    [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error)
+     {
+         __strong typeof(self) strongSelf = weakSelf;
+
+         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+         if (strongSelf.isBorderDetectionEnabled)
+         {
+             CIImage *enhancedImage = [CIImage imageWithData:imageData];
+             enhancedImage = [strongSelf filteredImageUsingContrastFilterOnImage:enhancedImage];
+             // 判断边缘识别度阈值, 再对拍照后的进行边缘识别
+             CIRectangleFeature *rectangleFeature;
+              if (rectangleDetectionConfidenceHighEnough(_imageDedectionConfidence))
+              {
+                  // 获取边缘识别最大矩形
+                  rectangleFeature = [strongSelf biggestRectangleInRectangles:[[self highAccuracyRectangleDetector] featuresInImage:enhancedImage]];
+
+                  if (rectangleFeature)
+                  {
+
+                      enhancedImage = [strongSelf correctPerspectiveForImage:enhancedImage withFeatures:rectangleFeature];
+                  }
+              }
+             
+             // 获取拍照图片
+             UIGraphicsBeginImageContext(CGSizeMake(enhancedImage.extent.size.height, enhancedImage.extent.size.width));
+             [[UIImage imageWithCIImage:enhancedImage scale:1.0 orientation:UIImageOrientationRight] drawInRect:CGRectMake(0,0, enhancedImage.extent.size.height, enhancedImage.extent.size.width)];
+             UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+             UIGraphicsEndImageContext();
+             
+             completionHandler(image, rectangleFeature);
+         }
+         else//未开启边缘识别，直接返回图片
+         {
+             completionHandler([UIImage imageWithData:imageData], nil);
+         }
+         
+         _isCapturing = NO;
+         
+         if (_rectOverlay) {
+             // 移除识别边框
+             _rectOverlay.path = nil;
+         }
+          // 隐藏照相机视图
+//          [strongSelf hideGLKView:YES completion:^
+//           {
+//
+//               [strongSelf hideGLKView:NO completion:^
+//                {
+//                    [strongSelf hideGLKView:YES completion:nil];
+//                }];
+//           }];
+     }];
+}
+
 
 // 添加边缘识别遮盖
 - (CIImage *)drawHighlightOverlayForPoints:(CIImage *)image topLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
@@ -432,7 +525,8 @@
     return [overlay imageByCompositingOverImage:image];
 }
 
-- (NSArray *)transfromRealRectWithImageRect:(CGRect)imageRect topLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
+/// 坐标系转换
+- (TransformCIFeatureRect)transfromRealRectWithImageRect:(CGRect)imageRect topLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
 {
     CGRect previewRect = self.frame;
     

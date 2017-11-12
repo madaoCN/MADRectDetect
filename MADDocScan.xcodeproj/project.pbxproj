@@ -34,6 +34,8 @@
 		51710FB81FAB7A77002CDCD7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51710FB71FAB7A6E002CDCD7 /* UIKit.framework */; };
 		5175D6931FA4D6DF003923CA /* MADSnapshotButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5175D6921FA4D6DF003923CA /* MADSnapshotButton.m */; };
 		5175D6961FA4D99A003923CA /* MADCameraCaptureController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5175D6951FA4D99A003923CA /* MADCameraCaptureController.m */; };
+		51BDB5E01FB3442D00B37FAF /* MADCropScaleController.m in Sources */ = {isa = PBXBuildFile; fileRef = 51BDB5DF1FB3442D00B37FAF /* MADCropScaleController.m */; };
+		51BDB5E51FB3494F00B37FAF /* MADCropScaleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 51BDB5E41FB3494F00B37FAF /* MADCropScaleView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +111,12 @@
 		5175D6921FA4D6DF003923CA /* MADSnapshotButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADSnapshotButton.m; sourceTree = "<group>"; };
 		5175D6941FA4D99A003923CA /* MADCameraCaptureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADCameraCaptureController.h; sourceTree = "<group>"; };
 		5175D6951FA4D99A003923CA /* MADCameraCaptureController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADCameraCaptureController.m; sourceTree = "<group>"; };
+		51BDB5DE1FB3442D00B37FAF /* MADCropScaleController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADCropScaleController.h; sourceTree = "<group>"; };
+		51BDB5DF1FB3442D00B37FAF /* MADCropScaleController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADCropScaleController.m; sourceTree = "<group>"; };
+		51BDB5E11FB344E400B37FAF /* MADMacroDefines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADMacroDefines.h; sourceTree = "<group>"; };
+		51BDB5E21FB3459300B37FAF /* MADPrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADPrefixHeader.pch; sourceTree = "<group>"; };
+		51BDB5E31FB3494F00B37FAF /* MADCropScaleView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MADCropScaleView.h; sourceTree = "<group>"; };
+		51BDB5E41FB3494F00B37FAF /* MADCropScaleView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MADCropScaleView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +195,8 @@
 				5175D6921FA4D6DF003923CA /* MADSnapshotButton.m */,
 				510D25311FAA12BE00C0D483 /* MADCameraCaptureView.h */,
 				510D25321FAA12BE00C0D483 /* MADCameraCaptureView.m */,
+				51BDB5E31FB3494F00B37FAF /* MADCropScaleView.h */,
+				51BDB5E41FB3494F00B37FAF /* MADCropScaleView.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -235,6 +245,7 @@
 				511A001B1FA4CA9C00C95093 /* LaunchScreen.storyboard */,
 				511A001E1FA4CA9C00C95093 /* Info.plist */,
 				511A001F1FA4CA9C00C95093 /* main.m */,
+				51BDB5E21FB3459300B37FAF /* MADPrefixHeader.pch */,
 			);
 			path = MADDocScan;
 			sourceTree = "<group>";
@@ -265,6 +276,8 @@
 				510D25341FAA12C300C0D483 /* view */,
 				5175D6941FA4D99A003923CA /* MADCameraCaptureController.h */,
 				5175D6951FA4D99A003923CA /* MADCameraCaptureController.m */,
+				51BDB5DE1FB3442D00B37FAF /* MADCropScaleController.h */,
+				51BDB5DF1FB3442D00B37FAF /* MADCropScaleController.m */,
 			);
 			path = Capture;
 			sourceTree = "<group>";
@@ -274,6 +287,7 @@
 			children = (
 				51710FB11FAB795D002CDCD7 /* MADCGTransfromHelper.h */,
 				51710FB21FAB795D002CDCD7 /* MADCGTransfromHelper.m */,
+				51BDB5E11FB344E400B37FAF /* MADMacroDefines.h */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -426,11 +440,13 @@
 				5175D6961FA4D99A003923CA /* MADCameraCaptureController.m in Sources */,
 				510D25291FAA099C00C0D483 /* MASConstraintMaker.m in Sources */,
 				5175D6931FA4D6DF003923CA /* MADSnapshotButton.m in Sources */,
+				51BDB5E01FB3442D00B37FAF /* MADCropScaleController.m in Sources */,
 				510D25271FAA099C00C0D483 /* ViewController+MASAdditions.m in Sources */,
 				51710FB31FAB795D002CDCD7 /* MADCGTransfromHelper.m in Sources */,
 				510D25261FAA099B00C0D483 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				510D25281FAA099C00C0D483 /* MASCompositeConstraint.m in Sources */,
 				511A00151FA4CA9C00C95093 /* ViewController.m in Sources */,
+				51BDB5E51FB3494F00B37FAF /* MADCropScaleView.m in Sources */,
 				510D252A1FAA099C00C0D483 /* MASLayoutConstraint.m in Sources */,
 				510D252C1FAA099C00C0D483 /* View+MASAdditions.m in Sources */,
 				510D252B1FAA099C00C0D483 /* NSArray+MASAdditions.m in Sources */,
@@ -604,12 +620,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B35J5K5S3C;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/MADDocScan/MADPrefixHeader.pch";
 				INFOPLIST_FILE = MADDocScan/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.madao.MADDocScan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -619,12 +637,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B35J5K5S3C;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/MADDocScan/MADPrefixHeader.pch";
 				INFOPLIST_FILE = MADDocScan/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.madao.MADDocScan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

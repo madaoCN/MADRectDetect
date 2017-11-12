@@ -1,0 +1,15 @@
+//
+//  MADPrefixHeader.pch
+//  MADDocScan
+//
+//  Created by 梁宪松 on 2017/11/8.
+//  Copyright © 2017年 梁宪松. All rights reserved.
+//
+
+#ifndef MADPrefixHeader_pch
+#define MADPrefixHeader_pch
+
+#import "UIColor+MADColor.h"
+#import "MADMacroDefines.h"
+
+#endif /* MADPrefixHeader_pch */

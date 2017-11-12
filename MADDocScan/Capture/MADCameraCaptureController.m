@@ -7,22 +7,11 @@
 //
 
 #import "MADCameraCaptureController.h"
+#import "MADCropScaleController.h"
 #import "MADSnapshotButton.h"
 #import "MADCameraCaptureView.h"
-#import "UIColor+MADColor.h"
 #import "Masonry.h"
 
-#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
-#define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
-
-#define NAV_WIDTH                   SCREEN_WIDTH
-#define NAV_HEIGHT                  (44)
-
-#define TAB_BAR_WIDTH               SCREEN_WIDTH
-#define TAB_BAR_HEIGHT              (48)
-
-#define STATUS_BAR_HEIGHT           (20)
-#define kBaseColor   HEX_RGB(0x32343d)
 
 @interface MADCameraCaptureController ()<UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
@@ -117,7 +106,6 @@
         _navToolBar.backgroundColor = kBaseColor;
     }
     return _navToolBar;
-
 }
 
 - (UIView *)focusIndicator
@@ -130,6 +118,8 @@
     }
     return _focusIndicator;
 }
+
+
 
 - (UIButton *)leftBtn
 {
@@ -175,7 +165,7 @@
 {
     if (!_snapshotBtn) {
         _snapshotBtn = [[MADSnapshotButton alloc] initWithFrame:CGRectMake(0, 0, 80, 80)];
-        
+        [_snapshotBtn addTarget:self action:@selector(onSnapshotBtn:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _snapshotBtn;
 }
@@ -206,6 +196,19 @@
     BOOL enable = !self.captureCameraView.isTorchEnabled;
     self.captureCameraView.enableTorch = enable;
     [self updateTitleLabel];
+}
+
+- (void)onSnapshotBtn:(id)sender {
+    
+    __weak typeof(self) weakSelf = self;
+    [self.captureCameraView captureImageWithCompletionHandler:^(UIImage *data, CIRectangleFeature *borderDetectFeature) {
+        __strong typeof(self) strongSelf = weakSelf;
+    
+        MADCropScaleController *vc = [[MADCropScaleController alloc] init];
+        vc.borderDetectFeature = borderDetectFeature;
+        vc.cropImage = data;
+        [strongSelf presentViewController:vc animated:YES completion:nil];
+    }];
 }
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)sender{
