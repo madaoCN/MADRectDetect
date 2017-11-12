@@ -472,7 +472,6 @@
 
                   if (rectangleFeature)
                   {
-
                       enhancedImage = [strongSelf correctPerspectiveForImage:enhancedImage withFeatures:rectangleFeature];
                   }
               }
